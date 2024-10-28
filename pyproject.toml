@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "portfolio"
+version = "0.1.0"
+description = ""
+authors = ["Vitalii-Kh95 <mew030995@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5"
+djangorestframework = "*"
+django-cors-headers = "*"
+django-taggit = "^6.1.0"
+pillow = "^11.0.0"
+
+[tool.poetry.dev-dependencies]
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
