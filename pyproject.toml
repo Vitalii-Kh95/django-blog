@@ -14,8 +14,9 @@ django-cors-headers = "*"
 django-taggit = "^6.1.0"
 pillow = "^11.0.0"
 
-[tool.poetry.dev-dependencies]
 
+[tool.poetry.group.dev.dependencies]
+faker = "^30.8.1"
 
 [build-system]
 requires = ["poetry-core"]
