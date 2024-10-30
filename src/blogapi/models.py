@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
@@ -26,6 +28,13 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
         super(Post, self).save(*args, **kwargs)
+
+    def delete(self, remove_related_image=False, *args, **kwargs):
+        if remove_related_image:
+            path = f"{self.image.storage.location}{self.image.name}"
+            if os.path.isfile(path):
+                os.remove(path)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.title

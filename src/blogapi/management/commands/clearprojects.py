@@ -6,3 +6,4 @@ from ...models import Project
 class Command(BaseCommand):
     def handle(self, *args, **options):
         Project.objects.all().delete()
+        self.stdout.write(self.style.SUCCESS("Ended without errors"))

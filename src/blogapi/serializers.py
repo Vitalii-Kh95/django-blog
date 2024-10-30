@@ -19,10 +19,28 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
 class BlogPostSerializer(PostSerializer):
     class Meta:
         model = BlogPost
-        fields = "__all__"
+        fields = (
+            "title",
+            "slug",
+            "description",
+            "content",
+            "image",
+            "created_at",
+            "author",
+            "tags",
+        )
 
 
 class ProjectSerializer(PostSerializer):
     class Meta:
         model = Project
-        fields = "__all__"
+        fields = (
+            "title",
+            "slug",
+            "description",
+            "content",
+            "image",
+            "created_at",
+            "author",
+            "tags",
+        )
