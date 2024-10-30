@@ -16,6 +16,11 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
         return f"{self.title}, {self.description}"
 
 
+class TagSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    slug = serializers.SlugField()
+
+
 class BlogPostSerializer(PostSerializer):
     class Meta:
         model = BlogPost
