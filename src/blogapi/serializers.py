@@ -5,8 +5,13 @@ from taggit.serializers import TaggitSerializer, TagListSerializerField
 from .models import BlogPost, Project
 
 
+class TagSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    slug = serializers.SlugField()
+
+
 class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
-    tags = TagListSerializerField()
+    tags = TagSerializer(many=True)
     author = serializers.SlugRelatedField(
         slug_field="username",
         queryset=User.objects.all(),
@@ -14,11 +19,6 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
 
     def __str__(self) -> str:
         return f"{self.title}, {self.description}"
-
-
-class TagSerializer(serializers.Serializer):
-    name = serializers.CharField()
-    slug = serializers.SlugField()
 
 
 class BlogPostSerializer(PostSerializer):

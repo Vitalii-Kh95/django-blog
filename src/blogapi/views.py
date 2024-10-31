@@ -32,6 +32,6 @@ class TagDetailView(APIView):
         qs1 = BlogPost.objects.filter(tags=tag)
         qs2 = Project.objects.filter(tags=tag)
         return Response(
-            BlogPostSerializer(qs1, many=True).data
-            + ProjectSerializer(qs2, many=True).data
+            BlogPostSerializer(qs1, many=True, context={"request": request}).data
+            + ProjectSerializer(qs2, many=True, context={"request": request}).data
         )
