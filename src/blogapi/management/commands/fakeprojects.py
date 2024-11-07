@@ -70,6 +70,6 @@ class Command(BaseCommand):
             )
             post.tags.add(*random.sample(list(Tag.objects.all()), random.randint(1, 5)))
             post.save()
-            self.stdout.write(self.style.HTTP_INFO(f'Created post: "{post}"...'))
+            self.stdout.write(self.style.HTTP_INFO(f'Created project: "{post}"...'))
 
         self.stdout.write(self.style.SUCCESS("Ended without errors"))

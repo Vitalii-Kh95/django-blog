@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from taggit.serializers import TaggitSerializer, TagListSerializerField
+from taggit.serializers import TaggitSerializer
 
 from .models import BlogPost, Project
 
@@ -17,35 +17,28 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
         queryset=User.objects.all(),
     )
 
+    class Meta:
+        fields = (
+            "id",
+            "title",
+            "slug",
+            "description",
+            "content",
+            "image",
+            "created_at",
+            "author",
+            "tags",
+        )
+
     def __str__(self) -> str:
         return f"{self.title}, {self.description}"
 
 
 class BlogPostSerializer(PostSerializer):
-    class Meta:
+    class Meta(PostSerializer.Meta):
         model = BlogPost
-        fields = (
-            "title",
-            "slug",
-            "description",
-            "content",
-            "image",
-            "created_at",
-            "author",
-            "tags",
-        )
 
 
 class ProjectSerializer(PostSerializer):
-    class Meta:
+    class Meta(PostSerializer.Meta):
         model = Project
-        fields = (
-            "title",
-            "slug",
-            "description",
-            "content",
-            "image",
-            "created_at",
-            "author",
-            "tags",
-        )
