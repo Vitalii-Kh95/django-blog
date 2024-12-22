@@ -47,8 +47,25 @@ CORS_ALLOWED_ORIGINS = (
     "http://localhost:5173",
     "http://localhost:8000",
 )
+CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost:5173"]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",  # Uses Django session
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",  # Example, adjust as needed
+    ],
+}
+
+
+# Use secure cookies in production
+SESSION_COOKIE_SECURE = False  # Send cookies over HTTPS only
+SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access to cookies
+SESSION_COOKIE_SAMESITE = "Lax"  # Mitigates CSRF in cross-site requests
+
 
 ROOT_URLCONF = "core.urls"
 
@@ -132,10 +149,43 @@ TAGGIT_CASE_INSENSITIVE = True
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",  # Optional: Customize the date format
+        },
+    },
     "handlers": {
-        "console": {"class": "logging.StreamHandler"},
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "file": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "formatter": "verbose",
+            "filename": "django_error.log",
+        },
     },
     "loggers": {
-        "root": {"handlers": ["console"], "level": "INFO"},
+        "django": {
+            "handlers": ["console", "file"],  # Logs to both console and file
+            "level": "INFO",
+            "propagate": False,  # Prevent duplication by stopping propagation to the root logger
+        },
+        "django.request": {
+            "handlers": ["file"],  # Logs only to file
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "watchdog": {
+            "handlers": ["console"],  # Logs only to console
+            "level": "ERROR",
+            "propagate": False,
+        },
+    },
+    "root": {
+        "handlers": ["console"],  # Handles logs not covered by specific loggers
+        "level": "INFO",  # Set higher level to reduce noise
     },
 }

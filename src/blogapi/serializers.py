@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from taggit.serializers import TaggitSerializer
 
@@ -11,6 +11,7 @@ class TagSerializer(serializers.Serializer):
 
 
 class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
+    User = get_user_model()
     tags = TagSerializer(many=True)
     author = serializers.SlugRelatedField(
         slug_field="username",
@@ -42,3 +43,37 @@ class BlogPostSerializer(PostSerializer):
 class ProjectSerializer(PostSerializer):
     class Meta(PostSerializer.Meta):
         model = Project
+
+
+User = get_user_model()
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "email"]  # adjust as needed
+
+
+class RegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    password_confirm = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "password", "password_confirm"]
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email is already in use.")
+        return value
+
+    def validate(self, attrs):
+        if attrs["password"] != attrs["password_confirm"]:
+            raise serializers.ValidationError("Passwords do not match.")
+        return attrs
+
+    def create(self, validated_data):
+        validated_data.pop("password_confirm", None)
+        password = validated_data.pop("password")
+        user = User.objects.create_user(**validated_data, password=password)
+        return user

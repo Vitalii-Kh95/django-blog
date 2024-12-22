@@ -45,18 +45,3 @@ class PostApiTest(APITestCase):
         self.assertEqual(response.data[0]["id"], 1)
         self.assertEqual(response.data[0]["title"], "test title")
         self.assertEqual(response.data[0]["slug"], "test-title")
-
-
-post_json = """
-{
-    'id': 1,
-    'title': 'title',
-    'slug': 'slug',
-    'description': 'description',
-    'content': 'content',
-    'image': 'image',
-    'created_at': '2020-01-01',
-    'author': admin,
-    'tags': ['tag1', 'tag2']
-}
-"""
