@@ -1,29 +1,50 @@
-from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 
-from .views import (
-    BlogPostViewSet,
-    ProjectViewSet,
+from blogapi.views.post_views import BlogPostViewSet, ProjectViewSet, TagListView
+from blogapi.views.service_views import HealthCheckView, api_root, csrf_token_view
+from blogapi.views.user_views import (
     RegistrationView,
-    TagListView,
     login_view,
     logout_view,
     whoami_view,
 )
 
-post_router = DefaultRouter()
-post_router.register("posts", BlogPostViewSet, basename="posts")
-
-project_router = DefaultRouter()
-project_router.register("projects", ProjectViewSet, basename="projects")
-
 app_name = "blogapi"
+
 urlpatterns = [
-    path("", include(post_router.urls)),
-    path("", include(project_router.urls)),
-    path("tags/", TagListView.as_view()),
-    path("login/", login_view),
-    path("logout/", logout_view),
-    path("whoami/", whoami_view),
+    path("", api_root, name="api-root"),
+    # BlogPostViewSet Endpoints
+    path(
+        "posts/",
+        BlogPostViewSet.as_view({"get": "list", "post": "create"}),
+        name="posts-list",
+    ),
+    path(
+        "posts/<slug:slug>/",
+        BlogPostViewSet.as_view(
+            {"get": "retrieve", "put": "update", "delete": "destroy"}
+        ),
+        name="posts-detail",
+    ),
+    # ProjectViewSet Endpoints
+    path(
+        "projects/",
+        ProjectViewSet.as_view({"get": "list", "post": "create"}),
+        name="projects-list",
+    ),
+    path(
+        "projects/<slug:slug>/",
+        ProjectViewSet.as_view(
+            {"get": "retrieve", "put": "update", "delete": "destroy"}
+        ),
+        name="projects-detail",
+    ),
+    # Additional Endpoints
+    path("tags/", TagListView.as_view(), name="tags-list"),
+    path("csrf_token/", csrf_token_view, name="csrf-token"),
+    path("login/", login_view, name="login"),
+    path("logout/", logout_view, name="logout"),
+    path("whoami/", whoami_view, name="whoami"),
     path("register/", RegistrationView.as_view(), name="register"),
+    path("health/", HealthCheckView.as_view(), name="health-check"),
 ]

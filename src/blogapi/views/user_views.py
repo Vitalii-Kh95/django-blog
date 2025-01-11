@@ -1,69 +1,11 @@
 from django.contrib.auth import authenticate, get_user_model, login, logout
-from django.middleware.csrf import get_token
-from rest_framework import filters, generics, pagination, permissions, status, viewsets
+from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from taggit.models import Tag
 
-from .models import BlogPost, Project
-from .permissions import IsAnonymous
-from .serializers import (
-    BlogPostSerializer,
-    ProjectSerializer,
-    RegistrationSerializer,
-    TagSerializer,
-)
-from .utils import is_email
-
-
-class PostViewSet(viewsets.ModelViewSet):
-    """
-    A viewset for viewing and editing blog posts.
-    """
-
-    filter_backends = [filters.SearchFilter]
-    search_fields = ["title", "description", "content"]
-    pagination_class = pagination.LimitOffsetPagination
-    ordering = ["-created_at"]
-    lookup_field = "slug"
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    def list(self, request, *args, **kwargs):
-        """
-        List all blog posts, with optional filtering by tag.
-        """
-        try:
-            queryset = self.filter_queryset(self.get_queryset())
-
-            if request.GET.get("tag"):
-                queryset = queryset.filter(tags__slug=request.GET.get("tag"))
-
-            page = self.paginate_queryset(queryset)
-            if page is not None:
-                serializer = self.get_serializer(page, many=True)
-                return self.get_paginated_response(serializer.data)
-
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class BlogPostViewSet(PostViewSet):
-    queryset = BlogPost.objects.all()
-    serializer_class = BlogPostSerializer
-
-
-class ProjectViewSet(PostViewSet):
-    queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
-
-
-class TagListView(APIView):
-    def get(self, request):
-        tags = Tag.objects.all()
-        return Response(TagSerializer(tags, many=True).data)
+from blogapi.permissions import IsAnonymous
+from blogapi.serializers import RegistrationSerializer
+from blogapi.utils import is_email, create_response
 
 
 @api_view(["POST"])
@@ -125,6 +67,33 @@ def login_view(request):
 
 
 @api_view(["POST"])
+@permission_classes([permissions.AllowAny])
+def login_view(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+    if not username or not password:
+        return create_response(
+            success=False,
+            error="Username and password are required.",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    user = authenticate(request, username=username, password=password)
+    if user:
+        login(request, user)
+        return create_response(
+            success=True,
+            data={"message": "Login successful."},
+            status_code=status.HTTP_200_OK,
+        )
+    return create_response(
+        success=False,
+        error="Invalid username or password.",
+        status_code=status.HTTP_401_UNAUTHORIZED,
+    )
+
+
+@api_view(["POST"])
 @permission_classes([permissions.IsAuthenticated])
 def logout_view(request):
     try:
@@ -152,13 +121,6 @@ def whoami_view(request):
         return Response(
             {"error": "Not authenticated"}, status=status.HTTP_401_UNAUTHORIZED
         )
-
-
-@api_view(["GET"])
-@permission_classes([permissions.AllowAny])
-def csrf_token_view(request):
-    token = get_token(request)
-    return Response({"csrftoken": token})
 
 
 class RegistrationView(generics.CreateAPIView):
