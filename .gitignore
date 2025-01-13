@@ -167,3 +167,5 @@ cython_debug/
 
 # database
 db.sqlite3
+managed_context/metadata.json
+test_suite_analysis/metadata.json
