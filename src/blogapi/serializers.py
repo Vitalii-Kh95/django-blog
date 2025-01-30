@@ -1,13 +1,15 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from taggit.models import Tag
 from taggit.serializers import TaggitSerializer
 
 from .models import BlogPost, Project
 
 
-class TagSerializer(serializers.Serializer):
-    name = serializers.CharField()
-    slug = serializers.SlugField()
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ["name"]
 
 
 class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
@@ -17,6 +19,7 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
         slug_field="username",
         queryset=User.objects.all(),
     )
+    slug = serializers.SlugField(read_only=True)
 
     class Meta:
         fields = (

@@ -1,8 +1,8 @@
+from django.conf import settings
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from django.conf import settings
 
 
 def global_404_handler(request, exception=None):
@@ -29,7 +29,7 @@ def global_404_handler(request, exception=None):
         if "application/json" in accept_header:
             # Prioritize JSON for API consumers
             return render_json_response(
-                {"error": "The requested API endpoint was not found."},
+                {"detail": "The requested API endpoint was not found."},
                 status.HTTP_404_NOT_FOUND,
             )
 
@@ -39,9 +39,10 @@ def global_404_handler(request, exception=None):
 
         # Default to JSON for ambiguous or missing Accept headers
         return render_json_response(
-            {"error": "The requested API endpoint was not found."},
+            {"detail": "The requested API endpoint was not found."},
             status.HTTP_404_NOT_FOUND,
         )
 
     # Render a custom HTML 404 page for non-API requests
+    print(request.headers)
     return render(request, "404.html", status=404)

@@ -1,10 +1,15 @@
-from django.urls import path
+from django.urls import path, re_path
 
 from blogapi.views.post_views import BlogPostViewSet, ProjectViewSet, TagListView
-from blogapi.views.service_views import HealthCheckView, api_root, csrf_token_view
+from blogapi.views.service_views import (
+    HealthCheckView,
+    api_root,
+    catch_all_404_view,
+    csrf_token_view,
+)
 from blogapi.views.user_views import (
+    LoginView,
     RegistrationView,
-    login_view,
     logout_view,
     whoami_view,
 )
@@ -42,9 +47,10 @@ urlpatterns = [
     # Additional Endpoints
     path("tags/", TagListView.as_view(), name="tags-list"),
     path("csrf_token/", csrf_token_view, name="csrf-token"),
-    path("login/", login_view, name="login"),
+    path("login/", LoginView.as_view(), name="login"),
     path("logout/", logout_view, name="logout"),
     path("whoami/", whoami_view, name="whoami"),
     path("register/", RegistrationView.as_view(), name="register"),
     path("health/", HealthCheckView.as_view(), name="health-check"),
+    re_path(r"^.*$", catch_all_404_view, name="catch-all-404"),
 ]

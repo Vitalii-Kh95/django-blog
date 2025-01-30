@@ -17,6 +17,9 @@ pillow = "^11.0.0"
 
 [tool.poetry.group.dev.dependencies]
 faker = "^30.8.1"
+pytest = "^8.3.4"
+httpx = "^0.28.1"
+pandas = "^2.2.3"
 
 [build-system]
 requires = ["poetry-core"]
