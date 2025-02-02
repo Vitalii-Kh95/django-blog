@@ -43,6 +43,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "core.middleware.LogRequestResponseMiddleware",
 ]
 
 
@@ -176,12 +177,23 @@ LOGGING = {
             "formatter": "verbose",
             "filename": "logs/django_error.log",
         },
+        "request_response_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "formatter": "verbose",
+            "filename": "logs/request_response.log",
+        },
     },
     "loggers": {
         "django": {
             "handlers": ["console", "file"],
             "level": "INFO",
             "propagate": False,  # Prevent duplication by stopping propagation to the root logger
+        },
+        "request_response": {
+            "handlers": ["request_response_file"],
+            "level": "INFO",
+            "propagate": False,
         },
     },
     "root": {
