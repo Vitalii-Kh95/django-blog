@@ -1,6 +1,8 @@
 import json
 import logging
 
+from django.http import FileResponse
+
 logger = logging.getLogger("request_response")
 
 
@@ -16,22 +18,26 @@ class LogRequestResponseMiddleware:
             "headers": dict(request.headers),
         }
 
-        if request.content_type == "application/json" and request.body:
+        content_type = request.headers.get("Content-Type", "")
+
+        if content_type == "application/json" and request.body:
             try:
                 request_info["body"] = json.loads(request.body)
             except json.JSONDecodeError:
                 request_info["body"] = "Request body is not JSON serializable"
-        elif request.content_type.startswith("multipart/form-data"):
+        elif content_type.startswith("multipart/form-data"):
             try:
-                parts = {}
-                for key, value in request.POST.items():
-                    parts[key] = value
-                for key, value in request.FILES.items():
-                    parts[key] = {
-                        "filename": value.name,
-                        "content_type": value.content_type,
-                        "size": value.size,
-                    }
+                parts = {
+                    **request.POST.dict(),
+                    **{
+                        key: {
+                            "filename": value.name,
+                            "content_type": value.content_type,
+                            "size": value.size,
+                        }
+                        for key, value in request.FILES.items()
+                    },
+                }
                 request_info["body"] = parts
             except Exception as e:
                 request_info["body"] = f"Failed to parse multipart form data: {e}"
@@ -48,11 +54,15 @@ class LogRequestResponseMiddleware:
             "headers": dict(response.items()),
         }
 
-        if response["Content-Type"] == "application/json":
+        response_content_type = response.headers.get("Content-Type", "")
+
+        if response_content_type == "application/json":
             try:
                 response_info["body"] = json.loads(response.content)
             except json.JSONDecodeError:
                 response_info["body"] = "Response body is not JSON serializable"
+        elif isinstance(response, FileResponse):
+            response_info["body"] = "<binary file response>"  # Avoid accessing .content
         else:
             response_info["body"] = response.content.decode("utf-8", errors="replace")
 

@@ -22,6 +22,19 @@ class PostViewSet(viewsets.ModelViewSet):
     lookup_field = "slug"
     permission_classes = [IsAdminOrReadOnly]
 
+    def get_queryset(self):
+        """
+        Get the queryset, including prefetching related data.
+        """
+        queryset = self.queryset
+
+        queryset = queryset.select_related("author")
+
+        # Example of related fields to prefetch
+        queryset = queryset.prefetch_related("tags")
+
+        return queryset
+
     def list(self, request, *args, **kwargs):
         """
         List all blog posts, with optional filtering by tag.

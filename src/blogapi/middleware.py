@@ -1,4 +1,5 @@
-from django.http import JsonResponse
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 
 
 class CustomAppendSlashMiddleware:
@@ -11,15 +12,22 @@ class CustomAppendSlashMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        # Exclude media URLs and any other URLs that should not have a trailing slash check
+        if request.path.startswith("/media/"):
+            return self.get_response(request)
+
         # Only check requests that don't end with a slash
         if not request.path.endswith("/"):
             # HTTP methods that require a trailing slash
-            methods_needing_slash = {"POST", "PUT", "PATCH", "DELETE"}
 
-            if request.method in methods_needing_slash:
-                return JsonResponse(
-                    {"detail": "Trailing slash missing from URL."}, status=400
-                )
+            response = Response(
+                {"detail": "Trailing slash missing from URL."}, status=400
+            )
+            response.accepted_renderer = JSONRenderer()
+            response.accepted_media_type = "application/json"
+            response.renderer_context = {}
+            response.render()
+            return response
 
         # Proceed with the normal request processing
         return self.get_response(request)
