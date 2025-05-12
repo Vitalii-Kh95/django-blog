@@ -15,9 +15,20 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = ["127.0.0.1", "localhost", "192.168.1.2"]
 
-ALLOWED_HOSTS_REGEXP = r"^(127\.0\.0\.1|localhost|192\.168\.\d+\.\d+:\d+$)$"
+# Use secure cookies in production
+SESSION_COOKIE_SECURE = False  # Send cookies over HTTPS only
+SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access to cookies
+SESSION_COOKIE_SAMESITE = "Lax"  # Mitigates CSRF in cross-site requests
+
+# ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "192.168.1.2",
+]
+
+# ALLOWED_HOSTS_REGEXP = r"^(127\.0\.0\.1|localhost|192\.168\.\d+\.\d+:\d+$)$"
 
 INTERNAL_IPS = ["127.0.0.1"]
 
@@ -52,23 +63,22 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # "core.middleware.LogRequestResponseMiddleware",
-]
-
-
-CORS_ALLOWED_ORIGINS = (
-    "http://localhost:5173",
-    "http://localhost:8000",
-)
-
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^http://192\.168\.\d+\.\d+:\d+$",  # Matches any IP in 192.168.x.x
+    # "blogapi.middleware.DevResponseDelayMiddleware",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
-
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = (
+    "http://localhost:5173",
+    "http://localhost:8000",
+    "http://192.168.1.2:5173",
+)
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost:5173"]
+# CORS_ALLOWED_ORIGIN_REGEXES = [
+#     r"^http://192\.168\.\d+\.\d+:\d+$",  # Matches any IP in 192.168.x.x
+# ]
+
+CSRF_TRUSTED_ORIGINS = ["http://localhost:5173", "http://192.168.1.2:5173"]
 
 
 REST_FRAMEWORK = {
@@ -84,12 +94,6 @@ REST_FRAMEWORK = {
     ],
     "EXCEPTION_HANDLER": "blogapi.utils.custom_exception_handler",
 }
-
-
-# Use secure cookies in production
-SESSION_COOKIE_SECURE = False  # Send cookies over HTTPS only
-SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access to cookies
-SESSION_COOKIE_SAMESITE = "Lax"  # Mitigates CSRF in cross-site requests
 
 
 ROOT_URLCONF = "core.urls"
@@ -189,7 +193,7 @@ LOGGING = {
             "formatter": "verbose",
         },
         "file": {
-            "level": "ERROR",
+            "level": "INFO",
             "class": "logging.FileHandler",
             "formatter": "verbose",
             "filename": str(LOGS_DIR / "django_error.log"),
@@ -214,7 +218,7 @@ LOGGING = {
         },
     },
     "root": {
-        "handlers": ["console"],  # Handles logs not covered by specific loggers
-        "level": "INFO",  # Set higher level to reduce noise
+        "handlers": ["console", "file"],  # Handles logs not covered by specific loggers
+        "level": "WARNING",  # Set higher level to reduce noise
     },
 }

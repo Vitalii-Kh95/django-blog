@@ -1,3 +1,6 @@
+import time
+
+from django.conf import settings
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
@@ -31,3 +34,14 @@ class CustomAppendSlashMiddleware:
 
         # Proceed with the normal request processing
         return self.get_response(request)
+
+
+class DevResponseDelayMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        if settings.DEBUG:
+            time.sleep(1)
+        return response
