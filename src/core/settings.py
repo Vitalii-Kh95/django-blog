@@ -22,13 +22,7 @@ SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access to cookies
 SESSION_COOKIE_SAMESITE = "Lax"  # Mitigates CSRF in cross-site requests
 
 # ALLOWED_HOSTS = ["*"]
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "192.168.1.2",
-]
-
-# ALLOWED_HOSTS_REGEXP = r"^(127\.0\.0\.1|localhost|192\.168\.\d+\.\d+:\d+$)$"
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "192.168.1.2", "192.168.0.112"]
 
 INTERNAL_IPS = ["127.0.0.1"]
 
@@ -72,13 +66,14 @@ CORS_ALLOWED_ORIGINS = (
     "http://localhost:5173",
     "http://localhost:8000",
     "http://192.168.1.2:5173",
+    "http://192.168.0.112:5173",
 )
 
-# CORS_ALLOWED_ORIGIN_REGEXES = [
-#     r"^http://192\.168\.\d+\.\d+:\d+$",  # Matches any IP in 192.168.x.x
-# ]
-
-CSRF_TRUSTED_ORIGINS = ["http://localhost:5173", "http://192.168.1.2:5173"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://192.168.1.2:5173",
+    "http://192.168.0.112:5173",
+]
 
 
 REST_FRAMEWORK = {
