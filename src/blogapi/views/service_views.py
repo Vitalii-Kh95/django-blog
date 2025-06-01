@@ -18,7 +18,8 @@ def api_root(request, format=None):
     return Response(
         data={
             "posts": {
-                "list": reverse("blogapi:posts-list", request=request, format=format),
+                "list": reverse("blogapi:posts-list", request=request, format=format)
+                + "?limit=6&offset=0",
                 "detail": reverse(
                     "blogapi:posts-detail",
                     kwargs={"slug": "example-slug"},
@@ -27,9 +28,8 @@ def api_root(request, format=None):
                 ),
             },
             "projects": {
-                "list": reverse(
-                    "blogapi:projects-list", request=request, format=format
-                ),
+                "list": reverse("blogapi:projects-list", request=request, format=format)
+                + "?limit=6&offset=0",
                 "detail": reverse(
                     "blogapi:projects-detail",
                     kwargs={"slug": "example-slug"},
