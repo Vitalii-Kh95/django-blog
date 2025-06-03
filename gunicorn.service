@@ -1,0 +1,15 @@
+[Unit]
+Description=Gunicorn daemon for blogapi
+After=network.target
+
+[Service]
+User=vitalii
+Group=www-data
+WorkingDirectory=/srv/blogapi
+ExecStart=/srv/blogapi/.venv/bin/gunicorn \
+    --access-logfile - \
+    --workers 3 \
+    --bind unix:/srv/blogapi/gunicorn.sock \
+    core.wsgi:application
+[Install]
+WantedBy=multi-user.target

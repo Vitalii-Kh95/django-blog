@@ -10,6 +10,10 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
 import os
 
 from django.core.wsgi import get_wsgi_application
+from dotenv import load_dotenv  # pip install python-dotenv
+
+env_path = "/srv/blogapi/.env"
+load_dotenv(dotenv_path=env_path)
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings.production")
 

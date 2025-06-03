@@ -43,22 +43,6 @@ MIDDLEWARE = [
     # "blogapi.middleware.DevResponseDelayMiddleware",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = (
-    "http://localhost:5173",
-    "http://localhost:8000",
-    "http://192.168.1.2:5173",
-    "http://192.168.0.112:5173",
-)
-
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
-    "http://192.168.1.2:5173",
-    "http://192.168.0.112:5173",
-]
-
-
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
@@ -128,12 +112,6 @@ TIME_ZONE = "Asia/Tashkent"
 USE_I18N = True
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
-MEDIA_ROOT = BASE_DIR / "media"
-MEDIA_URL = "/media/"
 
 # 3rd party apps
 TAGGIT_CASE_INSENSITIVE = True
