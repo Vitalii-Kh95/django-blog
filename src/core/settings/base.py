@@ -8,11 +8,6 @@ LOGS_DIR = BASE_DIR.parent / "logs"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ["SECRET_KEY"]
 
-# Use secure cookies in production
-SESSION_COOKIE_SECURE = False  # Send cookies over HTTPS only
-SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access to cookies
-SESSION_COOKIE_SAMESITE = "Lax"  # Mitigates CSRF in cross-site requests
-
 
 INSTALLED_APPS = [
     "django.contrib.admin",

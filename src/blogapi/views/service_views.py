@@ -1,9 +1,9 @@
 from django.db import connections
 from django.db.utils import OperationalError
 from django.middleware.csrf import get_token
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework import permissions, status
-from rest_framework.decorators import api_view, permission_classes
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -72,7 +72,7 @@ class HealthCheckView(APIView):
 
 
 @api_view(["GET", "HEAD"])
-@permission_classes([permissions.IsAuthenticated])
+@ensure_csrf_cookie
 def csrf_token_view(request):
     """
     Return the CSRF token for the current session.
