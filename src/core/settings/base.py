@@ -9,6 +9,11 @@ LOGS_DIR = BASE_DIR.parent / "logs"
 SECRET_KEY = os.environ["SECRET_KEY"]
 
 
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR.parent / "staticfiles"
+MEDIA_ROOT = BASE_DIR.parent / "media"
+MEDIA_URL = "/media/"
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",

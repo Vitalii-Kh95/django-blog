@@ -4,7 +4,9 @@ After=network.target
 
 [Service]
 User=vitalii
-Group=www-data
+Group=blogapi
+Environment=PYTHONPATH=/srv/blogapi/.venv/lib/python3.12/site-packages:/srv/blogapi/src
+EnvironmentFile=/srv/blogapi/.env
 WorkingDirectory=/srv/blogapi
 ExecStart=/srv/blogapi/.venv/bin/gunicorn \
     --access-logfile - \
