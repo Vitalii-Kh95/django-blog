@@ -181,3 +181,6 @@ cython_debug/
 # Garbage?
 managed_context/metadata.json
 test_suite_analysis/metadata.json
+
+192.168.1.2-key.pem
+192.168.1.2.pem

@@ -1,6 +1,16 @@
 from .base import *
 
 DEBUG = True
+INSTALLED_APPS += [
+    "django_extensions",
+    # "debug_toolbar",
+]
+
+# MIDDLEWARE = [
+#     "debug_toolbar.middleware.DebugToolbarMiddleware",
+# ] + MIDDLEWARE
+
+
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "192.168.1.2", "192.168.0.112"]
 
 CORS_ALLOW_CREDENTIALS = True
