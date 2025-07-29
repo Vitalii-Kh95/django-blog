@@ -187,5 +187,3 @@ test_suite_analysis/metadata.json
 myapp_data.json
 uv.lock
 db copy.sqlite3
-uv.lock
-uv.lock
